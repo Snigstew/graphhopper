@@ -219,6 +219,35 @@
         </pluginManagement>
         <plugins>
             <plugin>
+              <groupId>org.pitest</groupId>
+              <artifactId>pitest-maven</artifactId>
+              <version>1.15.0</version>
+            
+              <dependencies>
+                <!-- JUnit 5 support for PIT -->
+                <dependency>
+                  <groupId>org.pitest</groupId>
+                  <artifactId>pitest-junit5-plugin</artifactId>
+                  <version>1.2.1</version>
+                </dependency>
+              </dependencies>
+            
+              <configuration>
+                <targetClasses>
+                  <param>com.graphhopper.navigation.*</param>
+                </targetClasses>
+                <targetTests>
+                  <param>com.graphhopper.navigation.*Test*</param>
+                </targetTests>
+                <outputFormats>
+                  <param>HTML</param>
+                  <param>XML</param>
+                </outputFormats>
+                <reportsDirectory>${project.build.directory}/pit-reports</reportsDirectory>
+              </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
