@@ -1,0 +1,65 @@
+Test: invalidBearingsThrowsException
+    //Ensures invalid input for bearings throws exceptions:
+    //  non-numerical values
+    //  angle values without corresponding range
+    //  comma only
+
+Test: invalidDoPostThrowsException
+    //Ensures invalid or unsupported parameters in doPost
+    //throws IllegalArgumentExceptions. Only specific values
+    //are supported, therefore important to test all invalid
+    //entries
+
+Test: invalidDoGetParameterThrowsException
+    //Ensures invalid or unsupported parameters in doGet
+    //throws IllegalArgumentExceptions. The following
+    //attributes must be true:
+    //  - steps
+    //  - roundaboutExits
+    //  - bannerInstructions
+    //  - voiceInstructions
+    //And geometries must be equal to "polyline6"
+    //All these cases are tested below
+
+Test: doGetConstructorTest
+    //Ensures invalid response from HttpServletRequest
+    //throws IllegalArgumentExceptions. Here javafaker
+    //and Mockito are used to mock several class
+    //behaviours in order to ensure the errors thrown
+    //in the constructor of doGet are thrown under the
+    //proper conditions. Cases include:
+    //  - wrong coordinates
+    //  - wrong profile name
+    //  - wrong path
+
+Test: doGetWithErrorsReturns422
+    //Ensures doGet returns 422 when GHRequest has errors
+    //Many mocked classes required
+
+Test: doPostReturns200
+    //Ensures doPost returns 200 when GHResponse has no errors
+    //Many mocked classes required
+
+/*
+Mutation score before additional test methods:
+
+>> Line Coverage (for mutated classes only): 400/509 (79%)
+>> Generated 213 mutations Killed 113 (53%)
+>> Mutations with no coverage 48. Test strength 68%
+>> Ran 105 tests (0.49 tests per mutation)
+
+Mutation score after adding additional test methods
+    doPostReturns200
+    doGetWithErrorsReturns422
+    doGetConstructorTest
+    invalidDoGetParameterThrowsException
+    invalidDoPostThrowsException
+    invalidBearingsThrowsException
+    
+>> Line Coverage (for mutated classes only): 454/509 (89%)
+>> Generated 213 mutations Killed 154 (72%)
+>> Mutations with no coverage 27. Test strength 83%
+>> Ran 542 tests (2.54 tests per mutation)
+
+See PITest reports in root for detail
+*/
