@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os}}-node_modules-
       - name: Build ${{ matrix.java-version }}
-        run: mvn clean test
+        run: mvn clean install
       - name: Mutation Testing
         run: mvn org.pitest:pitest-maven:mutationCoverage
 
