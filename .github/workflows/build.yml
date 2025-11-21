@@ -37,5 +37,31 @@ jobs:
       - name: Build ${{ matrix.java-version }}
         run: mvn clean install
       - name: Mutation Testing
-        run: mvn org.pitest:pitest-maven:mutationCoverage
+        run: mvn -B -pl graphhopper-navigation -am org.pitest:pitest-maven:mutationCoverage | tee pitest_out.txt
+      - name: Extract mutation score
+        id: pit
+        run: |
+          SCORE=$(grep -oP 'Killed\s+\d+\s+\(\K\d+(?=%\))' <<< "$(cat pitest_out.txt)")
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+      - name: Compare mutation scores
+        id: compare
+        run: |
+          BASELINE=$(cat mutation_score.txt)
+          NEW=${{ steps.pit.outputs.score }}
+
+          echo "baseline=$BASELINE" >> $GITHUB_OUTPUT
+          
+          if [ "$NEW" -lt "$BASELINE" ]; then
+            echo "Mutation score decreased! Failing build."
+            exit 1
+          fi
+      - name: Write new mutation score if higher
+        if: ${{ steps.pit.outputs.score > steps.compare.outputs.baseline }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          echo "${{ steps.pit.outputs.score }}" > mutation_score.txt
+          git add mutation_score.txt
+          git commit -m "Update mutation score"
+          git push
 
