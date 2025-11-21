@@ -37,7 +37,7 @@ jobs:
       - name: Build ${{ matrix.java-version }}
         run: mvn clean install
       - name: Mutation Testing
-        run: mvn -B -pl graphhopper-nav -am org.pitest:pitest-maven:mutationCoverage | tee pitest_out.txt
+        run: mvn -B -pl navigation -am org.pitest:pitest-maven:mutationCoverage | tee pitest_out.txt
       - name: Extract mutation score
         id: pit
         run: |
