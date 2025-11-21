@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Peter Karich
  */
-@ExtendWith(FailureWatcherExtension.class)
+@ExtendWith(FailureWatcher.class)
 public class GHUtilityTest {
 
     @Test
