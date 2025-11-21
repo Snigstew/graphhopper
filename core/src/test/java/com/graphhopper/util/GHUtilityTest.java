@@ -24,6 +24,7 @@ import com.graphhopper.storage.Graph;
 
 import com.graphhopper.coll.GHIntLongHashMap;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -40,7 +41,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Peter Karich
  */
-@ExtendWith(FailureWatcher.class)
+@ExtendWith(FailureWatcherExtension.class)
 public class GHUtilityTest {
 
     @Test
