@@ -3,7 +3,7 @@ package com.graphhopper.routing.querygraph;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
-public class FailureWatcher extends TestWatcher {
+public class FailureWatcherExtension implements TestWatcher {
   public static String rick = """
                 ⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣶⣻⣛⣿⣯⣭⣭⣭⣅⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -40,7 +40,7 @@ public class FailureWatcher extends TestWatcher {
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⠀⠀⡗⠈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     """;
     @Override
-    protected void failed(Throwable e, Description description) {
-        System.out.println(rick + description.getMethodName());
+    public void testFailed(ExtensionContext context, Throwable cause) {
+        System.out.println(rick + context.getDisplayName());
     }
 }
