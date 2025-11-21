@@ -1,3 +1,5 @@
+package com.graphhopper.routing.querygraph;
+
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
