@@ -71,6 +71,19 @@
     </modules>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>5.11.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-inline</artifactId>
+                <version>5.2.0</version>
+                <scope>test</scope>
+            </dependency>
+
             <!-- provides compatible versions for jackson, guava, slf4j etc. -->
             <dependency>
                 <groupId>io.dropwizard</groupId>
@@ -234,10 +247,16 @@
             
               <configuration>
                 <targetClasses>
-                  <param>com.graphhopper.navigation.*</param>
+                    <param>com.graphhopper.navigation.*</param>
+                    <!--<param>com.graphhopper.map-matching.*</param>-->
+                    <param>com.graphhopper.routing.*</param>
+                    <param>com.graphhopper.util.*</param>
                 </targetClasses>
                 <targetTests>
-                  <param>com.graphhopper.navigation.*Test*</param>
+                    <param>com.graphhopper.navigation.*Test*</param>
+                    <!--<param>com.graphhopper.map-matching.*Test*</param>-->
+                    <param>com.graphhopper.routing.*Test*</param>
+                    <param>com.graphhopper.util.*Test*</param>
                 </targetTests>
                 <outputFormats>
                   <param>HTML</param>

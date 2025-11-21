@@ -17,10 +17,25 @@
  */
 package com.graphhopper.util;
 
+import com.graphhopper.storage.RoutingCHEdgeIterator;
+import com.graphhopper.storage.NodeAccess;
+import com.graphhopper.storage.Graph;
+//import static com.graphhopper.util.DistancePlaneProjection;
+
 import com.graphhopper.coll.GHIntLongHashMap;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.mockito.Mockito.*;
 
 /**
  * @author Peter Karich
@@ -63,5 +78,159 @@ public class GHUtilityTest {
 //        assertEquals(0, map2.get(1));
 //        assertEquals(1, map2.get(2));
 //        assertEquals(-1, map2.get(3));
+    }
+
+    @Test
+    public void testCount() {
+
+        EdgeIterator iter = mock(EdgeIterator.class);
+        when(iter.next()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
+        assertEquals(3, GHUtility.count(iter));
+
+        RoutingCHEdgeIterator r_iter = mock(RoutingCHEdgeIterator.class);
+        when(r_iter.next()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
+        assertEquals(3, GHUtility.count(r_iter));
+    }
+
+    @Test
+    public void testGetNeighbors() {
+
+        Set<Integer> list = new LinkedHashSet<>();
+        list.add(3);
+        list.add(6);
+        list.add(7);
+        list.add(8);
+
+        EdgeIterator iter = mock(EdgeIterator.class);
+        when(iter.next())
+            .thenReturn(true)
+            .thenReturn(true)
+            .thenReturn(true)
+            .thenReturn(true)
+            .thenReturn(false);
+        when(iter.getAdjNode())
+            .thenReturn(3)
+            .thenReturn(6)
+            .thenReturn(7)
+            .thenReturn(8);
+        
+        assertEquals(list, GHUtility.getNeighbors(iter));
+    }
+    @Test
+    public void testGetEdgeIds() {
+
+        List<Integer> list = new ArrayList<>();
+        list.add(11);
+        list.add(4);
+        list.add(8);
+
+        EdgeIterator iter = mock(EdgeIterator.class);
+        when(iter.next())
+            .thenReturn(true)
+            .thenReturn(true)
+            .thenReturn(true)
+            .thenReturn(false);
+        when(iter.getEdge())
+            .thenReturn(11)
+            .thenReturn(4)
+            .thenReturn(8);
+
+        assertEquals(list, GHUtility.getEdgeIds(iter));
+    }
+    @Test
+    public void testGetDistance() {
+
+        int id_from = 1;
+        int id_to = 2;
+
+        NodeAccess na = mock(NodeAccess.class);
+        when(na.getLat(id_from)).thenReturn(13.0);
+        when(na.getLon(id_from)).thenReturn(55.0);
+        when(na.getLat(id_to)).thenReturn(42.0);
+        when(na.getLon(id_to)).thenReturn(30.0);
+
+        assertEquals(DistancePlaneProjection.DIST_PLANE.calcDist(13.0, 55.0, 42.0, 30.0), GHUtility.getDistance(1, 2, na));
+    }
+    @Test
+    public void testGetEdge_OneEdge() {
+
+        int base = 1;
+        int adj = 2;
+
+        EdgeExplorer ex = mock(EdgeExplorer.class);
+        when(ex.setBaseNode(base)).thenAnswer(inv -> {
+            EdgeIterator iter = mock(EdgeIterator.class);
+            when(iter.next()).thenReturn(true).thenReturn(false);
+            when(iter.getAdjNode()).thenReturn(adj);
+            return iter;
+        });
+        
+        Graph g = mock(Graph.class);
+        when(g.createEdgeExplorer()).thenReturn(ex);
+
+        assertTrue(GHUtility.getEdge(g, base, adj) instanceof EdgeIterator);
+    }
+    @Test
+    public void testGetEdge_NullEdge() {
+
+        int base = 1;
+        int adj = 2;
+
+        EdgeExplorer ex = mock(EdgeExplorer.class);
+        when(ex.setBaseNode(base)).thenAnswer(inv -> {
+            EdgeIterator iter = mock(EdgeIterator.class);
+            when(iter.next()).thenReturn(false);
+            return iter;
+        });
+        
+        Graph g = mock(Graph.class);
+        when(g.createEdgeExplorer()).thenReturn(ex);
+
+        assertEquals(GHUtility.getEdge(g, base, adj), null);
+    }
+    @Test
+    public void testGetEdge_NoEdge() {
+
+        int base = 1;
+        int adj = 2;
+        int adj2 = 3;
+
+        EdgeExplorer ex = mock(EdgeExplorer.class);
+        when(ex.setBaseNode(base)).thenAnswer(inv -> {
+            EdgeIterator iter = mock(EdgeIterator.class);
+            when(iter.next()).thenReturn(true).thenReturn(false);
+            when(iter.getAdjNode()).thenReturn(adj);
+            return iter;
+        })
+            .thenAnswer(inv -> {
+            EdgeIterator iter = mock(EdgeIterator.class);
+            when(iter.next()).thenReturn(true).thenReturn(false);
+            when(iter.getAdjNode()).thenReturn(adj2);
+            return iter;
+        });
+        
+        Graph g = mock(Graph.class);
+        when(g.createEdgeExplorer()).thenReturn(ex);
+
+        assertThrows(IllegalStateException.class, () -> {GHUtility.getEdge(g, base, adj);});
+    }
+    @Test
+    public void testGetEdge_MultipleEdges() {
+
+        int base = 1;
+        int adj = 2;
+
+        EdgeExplorer ex = mock(EdgeExplorer.class);
+        when(ex.setBaseNode(base)).thenAnswer(inv -> {
+            EdgeIterator iter = mock(EdgeIterator.class);
+            when(iter.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+            when(iter.getAdjNode()).thenReturn(adj).thenReturn(adj);
+            return iter;
+        });
+        
+        Graph g = mock(Graph.class);
+        when(g.createEdgeExplorer()).thenReturn(ex);
+
+        assertThrows(IllegalArgumentException.class, () -> {GHUtility.getEdge(g, base, adj);});
     }
 }
