@@ -1,7 +1,10 @@
 package com.graphhopper.routing.querygraph;
 
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestWatcher;
+
+import java.util.Optional;
+
 
 public class FailureWatcher implements TestWatcher {
   public static String rick = """
