@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
+@ExtendWith(FailureWatcher.class)
 public class QueryOverlayBuilderTest {
 
     private QueryOverlay qo;
